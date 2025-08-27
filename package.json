@@ -1,12 +1,13 @@
 {
-	"name": "smithery-scaffold",
+	"name": "mcp-tools-archai",
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
 	"module": "./src/index.ts",
 	"type": "module",
 	"scripts": {
-		"dev": "npx @smithery/cli dev"
+		"dev": "npx @smithery/cli dev",
+		"build": "npx @smithery/cli build"
 	},
 	"keywords": [],
 	"author": "",
