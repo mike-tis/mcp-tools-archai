@@ -85,6 +85,7 @@ export const topicsSearchParams = {
 
 export const generalSearchParams = {
   query: z.string().describe("Search query to filter both tokens and topics (case insensitive, partial match)"),
+  limit: z.number().default(5).describe("Maximum number of results to return per type (default: 5)"),
 };
 
 export const topicDetailsParams = {
@@ -94,7 +95,7 @@ export const topicDetailsParams = {
 export const topicPostsParams = {
   topic: z.string().describe("Topic identifier to get top posts for (e.g. 'bitcoin')"),
   limit: z.number().default(10).describe("Maximum number of posts to return (default: 10)"),
-  startTime: z.number().optional().describe("Optional start time as UNIX timestamp. If provided, returns top posts for the time range. If not provided, returns top posts from the last 24 hours"),
+  startTime: z.string().optional().describe("Optional start time as ISO timestamp (e.g. '2023-04-01T00:00:00Z'). If provided, returns top posts for the time range. If not provided, returns top posts from the last 24 hours"),
 };
 
 // API functions
@@ -256,12 +257,14 @@ export async function getTopicPosts(
   timeout: number,
   topic: string,
   limit: number = 10,
-  startTime?: number
+  startTime?: string
 ): Promise<LunarCrushTopicPost[]> {
   try {
     let url = `https://lunarcrush.com/api4/public/topic/${encodeURIComponent(topic)}/posts/v1`;
     if (startTime) {
-      url += `?start=${startTime}`;
+      // Convert ISO timestamp to UNIX timestamp
+      const unixTimestamp = Math.floor(new Date(startTime).getTime() / 1000);
+      url += `?start=${unixTimestamp}`;
     }
     
     const response = await fetch(url, {

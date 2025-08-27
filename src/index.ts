@@ -109,13 +109,11 @@ export default function createStatelessServer({
     "lunarCrushGeneralSearch",
     "Search both cryptocurrency tokens and social topics from LunarCrush API",
     generalSearchParams,
-    async ({ query }) => {
+    async ({ query, limit = 5 }) => {
       try {
-        const RESULTS_PER_TYPE = 5;
-        
         const [tokens, topics] = await Promise.all([
-          searchTokens(config.LunarCrushApiKey, config.timeout, query, RESULTS_PER_TYPE),
-          searchTopics(config.LunarCrushApiKey, config.timeout, query, RESULTS_PER_TYPE)
+          searchTokens(config.LunarCrushApiKey, config.timeout, query, limit),
+          searchTopics(config.LunarCrushApiKey, config.timeout, query, limit)
         ]);
 
         const results = {
