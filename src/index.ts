@@ -50,7 +50,7 @@ export default function createStatelessServer({
           content: [
             { 
               type: "text", 
-              text: JSON.stringify(tokens, null, 2)
+              text: JSON.stringify(tokens)
             }
           ],
         };
@@ -86,7 +86,7 @@ export default function createStatelessServer({
           content: [
             { 
               type: "text", 
-              text: JSON.stringify(topics, null, 2)
+              text: JSON.stringify(topics)
             }
           ],
         };
@@ -125,7 +125,7 @@ export default function createStatelessServer({
           content: [
             { 
               type: "text", 
-              text: JSON.stringify(results, null, 2)
+              text: JSON.stringify(results)
             }
           ],
         };
@@ -160,7 +160,7 @@ export default function createStatelessServer({
           content: [
             { 
               type: "text", 
-              text: JSON.stringify(topicDetails, null, 2)
+              text: JSON.stringify(topicDetails)
             }
           ],
         };
@@ -197,7 +197,7 @@ export default function createStatelessServer({
           content: [
             { 
               type: "text", 
-              text: JSON.stringify(topicPosts, null, 2)
+              text: JSON.stringify(topicPosts)
             }
           ],
         };
