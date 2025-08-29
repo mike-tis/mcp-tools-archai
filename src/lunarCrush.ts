@@ -262,7 +262,6 @@ export async function getTopicPosts(
   try {
     let url = `https://lunarcrush.com/api4/public/topic/${encodeURIComponent(topic)}/posts/v1`;
     if (startTime) {
-      // Convert ISO timestamp to UNIX timestamp
       const unixTimestamp = Math.floor(new Date(startTime).getTime() / 1000);
       url += `?start=${unixTimestamp}`;
     }

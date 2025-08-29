@@ -5,7 +5,7 @@ import {
   searchTopics,
   getTopicDetails,
   getTopicPosts,
-  tokensSearchParams,
+  tokensSearchParams as lunarCrushTokensSearchParams,
   topicsSearchParams,
   generalSearchParams,
   topicDetailsParams,
@@ -15,9 +15,15 @@ import {
   LunarCrushTopicDetails,
   LunarCrushTopicPost
 } from "./lunarCrush.js";
+import {
+  searchProjects,
+  tokensSearchParams as tokenTerminalTokensSearchParams,
+  TokenTerminalProject
+} from "./tokenTerminal.js";
 
 export const configSchema = z.object({
   LunarCrushApiKey: z.string().describe("LunarCrush API key"),
+  TokenTerminalApiKey: z.string().describe("Token Terminal API key"),
   timeout: z.number().default(5000).describe("Request timeout in milliseconds"),
 });
 
@@ -36,7 +42,7 @@ export default function createStatelessServer({
   server.tool(
     "lunarCrushTokensSearch",
     "Search and filter cryptocurrency tokens from LunarCrush API",
-    tokensSearchParams,
+    lunarCrushTokensSearchParams,
     async ({ query, limit = 10 }) => {
       try {
         const tokens = await searchTokens(
@@ -209,6 +215,42 @@ export default function createStatelessServer({
             { 
               type: "text", 
               text: `Error fetching LunarCrush topic posts: ${errorMessage}`
+            }
+          ],
+        };
+      }
+    }
+  );
+
+  server.tool(
+    "tokenTerminalTokensSearch",
+    "Search and filter cryptocurrency projects from Token Terminal API",
+    tokenTerminalTokensSearchParams,
+    async ({ query, limit = 5 }) => {
+      try {
+        const projects = await searchProjects(
+          config.TokenTerminalApiKey,
+          config.timeout,
+          query,
+          limit
+        );
+
+        return {
+          content: [
+            { 
+              type: "text", 
+              text: JSON.stringify(projects)
+            }
+          ],
+        };
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        
+        return {
+          content: [
+            { 
+              type: "text", 
+              text: `Error searching Token Terminal projects: ${errorMessage}`
             }
           ],
         };
