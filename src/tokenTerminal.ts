@@ -57,6 +57,10 @@ export const tokensSearchParams = {
   limit: z.number().max(10).default(5).describe("Maximum number of results to return (default: 5, max: 10)"),
 };
 
+export const tokensSearchMultipleParams = {
+  queries: z.array(z.string()).describe("Array of search queries to filter projects (maximum 5 queries processed)"),
+};
+
 // API functions
 export async function searchProjects(
   apiKey: string, 

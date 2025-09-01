@@ -18,6 +18,7 @@ import {
 import {
   searchProjects,
   tokensSearchParams as tokenTerminalTokensSearchParams,
+  tokensSearchMultipleParams,
   TokenTerminalProject
 } from "./tokenTerminal.js";
 
@@ -222,7 +223,7 @@ export default function createStatelessServer({
     }
   );
 
-  server.tool(
+    server.tool(
     "tokenTerminalTokensSearch",
     "Search and filter cryptocurrency projects from Token Terminal API",
     tokenTerminalTokensSearchParams,
@@ -251,6 +252,65 @@ export default function createStatelessServer({
             { 
               type: "text", 
               text: `Error searching Token Terminal projects: ${errorMessage}`
+            }
+          ],
+        };
+      }
+    }
+  );
+
+  server.tool(
+    "tokenTerminalTokensSearchMultiple",
+    "Search and filter cryptocurrency projects from Token Terminal API using multiple queries",
+    tokensSearchMultipleParams,
+    async ({ queries }) => {
+      try {
+        // Limit to processing only the first 5 queries
+        const limitedQueries = queries.slice(0, 5);
+        
+        // Process each query with a fixed limit of 5 results per query
+        const results = await Promise.all(
+          limitedQueries.map(async (query) => {
+            try {
+              const projects = await searchProjects(
+                config.TokenTerminalApiKey,
+                config.timeout,
+                query,
+                5  // Fixed limit of 5 per query
+              );
+              
+              return {
+                query,
+                projects,
+                success: true
+              };
+            } catch (error) {
+              const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+              return {
+                query,
+                error: errorMessage,
+                success: false
+              };
+            }
+          })
+        );
+
+        return {
+          content: [
+            { 
+              type: "text", 
+              text: JSON.stringify(results)
+            }
+          ],
+        };
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        
+        return {
+          content: [
+            { 
+              type: "text", 
+              text: `Error processing multiple Token Terminal queries: ${errorMessage}`
             }
           ],
         };
