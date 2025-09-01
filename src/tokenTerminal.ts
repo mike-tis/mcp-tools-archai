@@ -98,19 +98,7 @@ export async function searchProjects(
       const projectIdMatch = project.project_id?.toLowerCase().includes(queryLower);
       const coingeckoIdMatch = project.coingecko_id?.toLowerCase().includes(queryLower);
       
-      // Match on product fields (if products array exists)
-      let productMatch = false;
-      if (project.products && Array.isArray(project.products)) {
-        productMatch = project.products.some(product => {
-          return (
-            product.product_id?.toLowerCase().includes(queryLower) ||
-            product.product_name?.toLowerCase().includes(queryLower) ||
-            product.symbol?.toLowerCase().includes(queryLower)
-          );
-        });
-      }
-      
-      return nameMatch || projectIdMatch || coingeckoIdMatch || productMatch;
+      return nameMatch || projectIdMatch || coingeckoIdMatch;
     });
 
     const limitedResults = filteredProjects.slice(0, actualLimit);
