@@ -16,6 +16,14 @@ import {
   LunarCrushTopicPost
 } from "./lunarCrush.js";
 import {
+  searchBlumTokens,
+  searchBlumTokensMultiple,
+  blumTokensSearchParams,
+  blumTokensSearchMultipleParams,
+  BLUM_NETWORKS,
+  BlumToken
+} from "./blum.js";
+import {
   searchProjects,
   tokensSearchParams as tokenTerminalTokensSearchParams,
   tokensSearchMultipleParams,
@@ -317,6 +325,76 @@ export default function createStatelessServer({
       }
     }
   );
+
+  server.tool(
+  "blumTokensSearch",
+  "Search for tokens from local Blum CSV files by name or symbol",
+  blumTokensSearchParams,
+  async ({ query, network, limit = 10 }) => {
+    try {
+      const tokens = await searchBlumTokens(
+        query,
+        network,
+        limit
+      );
+
+      return {
+        content: [
+          { 
+            type: "text", 
+            text: JSON.stringify(tokens)
+          }
+        ],
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      
+      return {
+        content: [
+          { 
+            type: "text", 
+            text: `Error searching Blum tokens: ${errorMessage}`
+          }
+        ],
+      };
+    }
+  }
+);
+
+server.tool(
+  "blumTokensSearchMultiple",
+  "Search for tokens from local Blum CSV files using multiple queries",
+  blumTokensSearchMultipleParams,
+  async ({ queries, network, limit = 5 }) => {
+    try {
+      const results = await searchBlumTokensMultiple(
+        queries,
+        network,
+        limit
+      );
+
+      return {
+        content: [
+          { 
+            type: "text", 
+            text: JSON.stringify(results)
+          }
+        ],
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      
+      return {
+        content: [
+          { 
+            type: "text", 
+            text: `Error processing multiple Blum token queries: ${errorMessage}`
+          }
+        ],
+      };
+    }
+  }
+);
 
   return server.server;
 }
